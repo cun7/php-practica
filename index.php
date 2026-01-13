@@ -146,6 +146,9 @@ echo parImpar1(10);
         <h2>Formulario de prueba</h2>
 
         <form method="POST" action="">
+        <label>ID:</label><br>
+        <input type="number" name="id"><br><br>
+
             <label>Nombre:</label><br>
             <input type="tex" name="nombre"><br><br>
 
@@ -156,12 +159,15 @@ echo parImpar1(10);
         </form>
 
         <?php
+        include "conexion.php";
+        
         if ($_SERVER["REQUEST_METHOD"] == "POST"){
-
+            $id = $_POST["id"];
             $nombre = $_POST["nombre"];
             $edad = $_POST["edad"];
 
             echo "<h3>Datos recibidos:</h3>";
+            echo "ID: " . $id. "<br>";
             echo "Nombre: " . $nombre. "<br>";
             echo "Edad: " .$edad . "<br>";
 
@@ -172,10 +178,33 @@ echo parImpar1(10);
             }
 
             if (empty($nombre) || empty($edad)){
-                echo "Todos los campos son obligatorios";
+                echo "<br>Todos los campos son obligatorios";
+            }
+
+            if(!empty($nombre) && !empty($edad)){
+                $sql = "INSERT INTO personas (id, nombre, edad) VALUES ('$id', '$nombre', '$edad')";
+
+                if($conn -> query($sql) === TRUE){
+                    echo "<h4>Datos guardados correctamente</h4>";
+                }else{
+                    echo "Error al guardar" . $conn -> error;
+                }
+            }else{
+                echo "<br>Todos los campos son obligatorios1"; 
             }
         }
 
+        //Listar datos guardados
+        $resultado = $conn->query("SELECT * FROM personas");
+
+        echo "<h3>Personas Resgistradas</h3>";
+
+        while($fila = $resultado->fetch_assoc()){
+            echo "Id: ".$fila["id"]."-";
+            echo "Nombre: ".$fila["nombre"]."-";
+            echo "Edad: ".$fila["edad"]."<br>";
+        }
+        
         ?>
     </body>
 </html>
