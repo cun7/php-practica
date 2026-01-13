@@ -1,5 +1,5 @@
 <?php
-$nombre = "Adicentro";
+/*$nombre = "Adicentro";
 $edad = 28;
 $activo = true;
 
@@ -133,4 +133,49 @@ function parImpar1($numero){
 echo "<br>";
 echo parImpar1(10);
 
+*/
 ?>
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Formulario PHP</title>
+    </head>
+    <body>
+        <h2>Formulario de prueba</h2>
+
+        <form method="POST" action="">
+            <label>Nombre:</label><br>
+            <input type="tex" name="nombre"><br><br>
+
+            <label>Edad:</label><br>
+            <input type="number" name="edad"><br><br>
+
+            <button type="submit">Enviar</button>
+        </form>
+
+        <?php
+        if ($_SERVER["REQUEST_METHOD"] == "POST"){
+
+            $nombre = $_POST["nombre"];
+            $edad = $_POST["edad"];
+
+            echo "<h3>Datos recibidos:</h3>";
+            echo "Nombre: " . $nombre. "<br>";
+            echo "Edad: " .$edad . "<br>";
+
+            if($edad >= 18){
+                echo "Es mayor de edad";
+            }else{
+                echo "Es menor de edad";
+            }
+
+            if (empty($nombre) || empty($edad)){
+                echo "Todos los campos son obligatorios";
+            }
+        }
+
+        ?>
+    </body>
+</html>
