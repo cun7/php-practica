@@ -134,6 +134,23 @@ echo "<br>";
 echo parImpar1(10);
 
 */
+
+include "conexion.php";
+//Editar
+$nombreEdit = "";
+$edadEdit = "";
+$idEdit = "";
+
+if (isset($_GET["editar"])){
+    $idEdit = $_GET["editar"];
+
+    $result = $conn->query("SELECT * FROM personas WHERE id=$idEdit");
+    $data = $result->fetch_assoc();
+    
+    $nombreEdit = $data["nombre"];
+    $edadEdit = $data["edad"];
+}
+
 ?>
 
 
@@ -147,24 +164,26 @@ echo parImpar1(10);
 
         <form method="POST" action="">
         <label>ID:</label><br>
-        <input type="number" name="id"><br><br>
+        <input type="hidden" name="id" value="<?php echo $idEdit; ?>"><br><br>
 
             <label>Nombre:</label><br>
-            <input type="tex" name="nombre"><br><br>
+            <input type="tex" name="nombre" value="<?php echo $nombreEdit;?>"><br><br>
 
             <label>Edad:</label><br>
-            <input type="number" name="edad"><br><br>
+            <input type="number" name="edad" value="<?php echo $edadEdit; ?>"><br><br>
 
-            <button type="submit">Enviar</button>
+            <button type="submit">
+               <?php echo $idEdit ? "Actualizar" : "Guardar"; ?> 
+            </button>
         </form>
 
         <?php
-        include "conexion.php";
-        
+        //Guardar
         if ($_SERVER["REQUEST_METHOD"] == "POST"){
-            $id = $_POST["id"];
+            
             $nombre = $_POST["nombre"];
             $edad = $_POST["edad"];
+            $id = $_POST["id"];
 
             echo "<h3>Datos recibidos:</h3>";
             echo "ID: " . $id. "<br>";
@@ -182,13 +201,22 @@ echo parImpar1(10);
             }
 
             if(!empty($nombre) && !empty($edad)){
-                $sql = "INSERT INTO personas (id, nombre, edad) VALUES ('$id', '$nombre', '$edad')";
-
-                if($conn -> query($sql) === TRUE){
-                    echo "<h4>Datos guardados correctamente</h4>";
+                
+                if($id){
+                    //Actualizar
+                    $sql = "UPDATE personas SET nombre='$nombre', edad='$edad' WHERE id=$id";
                 }else{
-                    echo "Error al guardar" . $conn -> error;
+                    //Insertar  
+                    $sql = "INSERT INTO personas (nombre, edad) VALUES ('$nombre', '$edad')";
+
+                    echo "<h4>Datos guardados correctamente</h4>";
                 }
+                $conn -> query($sql);
+                //if($conn -> query($sql) === TRUE){
+                    //echo "<h4>Datos guardados correctamente</h4>";
+                //}else{
+                    //echo "Error al guardar" . $conn -> error;
+                //}
             }else{
                 echo "<br>Todos los campos son obligatorios1"; 
             }
@@ -202,9 +230,25 @@ echo parImpar1(10);
         while($fila = $resultado->fetch_assoc()){
             echo "Id: ".$fila["id"]."-";
             echo "Nombre: ".$fila["nombre"]."-";
-            echo "Edad: ".$fila["edad"]."<br>";
+            echo "Edad: ".$fila["edad"]."";
+
+            echo "<a href='?eliminar=".$fila["id"]."'>Eliminar</a>";
+            echo "<a href='?editar=".$fila["id"]."'>Editar</a>";
+            echo "<br>";
         }
         
+        //Eliminar
+        if(isset($_GET["eliminar"])){
+            $id = $_GET["eliminar"];
+
+            $sql = "DELETE FROM personas where id= $id";
+            $conn->query($sql);
+        }
+        
+            echo "<label>Registro eliminado correctamente.</label>";
+        
+
+
         ?>
     </body>
 </html>
