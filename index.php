@@ -136,119 +136,63 @@ echo parImpar1(10);
 */
 
 include "conexion.php";
-//Editar
-$nombreEdit = "";
-$edadEdit = "";
-$idEdit = "";
-
-if (isset($_GET["editar"])){
-    $idEdit = $_GET["editar"];
-
-    $result = $conn->query("SELECT * FROM personas WHERE id=$idEdit");
-    $data = $result->fetch_assoc();
-    
-    $nombreEdit = $data["nombre"];
-    $edadEdit = $data["edad"];
-}
 
 ?>
 
-
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Formulario PHP</title>
-    </head>
-    <body>
-        <h2>Formulario de prueba</h2>
 
-        <form method="POST" action="">
-        <label>ID:</label><br>
-        <input type="hidden" name="id" value="<?php echo $idEdit; ?>"><br><br>
+<head>
+    <title>Formulario PHP</title>
+</head>
 
-            <label>Nombre:</label><br>
-            <input type="tex" name="nombre" value="<?php echo $nombreEdit;?>"><br><br>
+<body>
+    <h2>Formulario de prueba</h2>
 
-            <label>Edad:</label><br>
-            <input type="number" name="edad" value="<?php echo $edadEdit; ?>"><br><br>
+    <?php
+    include "vistas/formulario.php";
 
-            <button type="submit">
-               <?php echo $idEdit ? "Actualizar" : "Guardar"; ?> 
-            </button>
-        </form>
+    //Guardar
+    /* 
+   if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-        <?php
-        //Guardar
-        if ($_SERVER["REQUEST_METHOD"] == "POST"){
-            
-            $nombre = $_POST["nombre"];
-            $edad = $_POST["edad"];
-            $id = $_POST["id"];
+        echo "<h3>Datos recibidos:</h3>";
+        echo "ID: " . $id . "<br>";
+        echo "Nombre: " . $nombre . "<br>";
+        echo "Edad: " . $edad . "<br>";
 
-            echo "<h3>Datos recibidos:</h3>";
-            echo "ID: " . $id. "<br>";
-            echo "Nombre: " . $nombre. "<br>";
-            echo "Edad: " .$edad . "<br>";
-
-            if($edad >= 18){
-                echo "Es mayor de edad";
-            }else{
-                echo "Es menor de edad";
-            }
-
-            if (empty($nombre) || empty($edad)){
-                echo "<br>Todos los campos son obligatorios";
-            }
-
-            if(!empty($nombre) && !empty($edad)){
-                
-                if($id){
-                    //Actualizar
-                    $sql = "UPDATE personas SET nombre='$nombre', edad='$edad' WHERE id=$id";
-                }else{
-                    //Insertar  
-                    $sql = "INSERT INTO personas (nombre, edad) VALUES ('$nombre', '$edad')";
-
-                    echo "<h4>Datos guardados correctamente</h4>";
-                }
-                $conn -> query($sql);
-                //if($conn -> query($sql) === TRUE){
-                    //echo "<h4>Datos guardados correctamente</h4>";
-                //}else{
-                    //echo "Error al guardar" . $conn -> error;
-                //}
-            }else{
-                echo "<br>Todos los campos son obligatorios1"; 
-            }
+        if ($edad >= 18) {
+            echo "Es mayor de edad";
+        } else {
+            echo "Es menor de edad";
         }
 
-        //Listar datos guardados
-        $resultado = $conn->query("SELECT * FROM personas");
-
-        echo "<h3>Personas Resgistradas</h3>";
-
-        while($fila = $resultado->fetch_assoc()){
-            echo "Id: ".$fila["id"]."-";
-            echo "Nombre: ".$fila["nombre"]."-";
-            echo "Edad: ".$fila["edad"]."";
-
-            echo "<a href='?eliminar=".$fila["id"]."'>Eliminar</a>";
-            echo "<a href='?editar=".$fila["id"]."'>Editar</a>";
-            echo "<br>";
+        if (empty($nombre) || empty($edad)) {
+            echo "<br>Todos los campos son obligatorios";
         }
-        
-        //Eliminar
-        if(isset($_GET["eliminar"])){
-            $id = $_GET["eliminar"];
 
-            $sql = "DELETE FROM personas where id= $id";
-            $conn->query($sql);
-        }
+    }
         
-            echo "<label>Registro eliminado correctamente.</label>";
-        
+    */
 
+    
+    //Listar datos guardados
+    $resultado = $conn->query("SELECT * FROM personas");
 
-        ?>
-    </body>
+    echo "<h3>Personas Resgistradas</h3>";
+
+    while ($fila = $resultado->fetch_assoc()) {
+        echo "Id: " . $fila["id"] . "-";
+        echo "Nombre: " . $fila["nombre"] . "-";
+        echo "Edad: " . $fila["edad"] . "";
+        // echo "<a href='?acciones/eliminar=" . $fila["id"] . "'>Eliminar</a>";
+        // echo "<a href='?acciones/editar=" . $fila["id"] . "'>Editar</a>";
+        echo "<a href='acciones/eliminar.php?eliminar=" . $fila["id"] . "'>Eliminar</a>";
+        echo "<a href='acciones/editar.php?editar=" . $fila["id"] . "'>Editar</a>";
+        echo "<br>";
+    }
+
+    ?>
+</body>
+
 </html>
